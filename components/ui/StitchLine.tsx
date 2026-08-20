@@ -62,7 +62,7 @@ export default function StitchLine() {
       {/* the needle */}
       <span className="spine-needle absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
         <span className="block w-px h-4 bg-gradient-to-b from-transparent to-[var(--color-brass)]" />
-        <span className="block w-[7px] h-[7px] rounded-full bg-[var(--color-brass)]" style={{ boxShadow: "0 0 12px 2px rgba(154,123,60,.55)" }} />
+        <span className="block w-[7px] h-[7px] rounded-full bg-[var(--color-brass)]" style={{ boxShadow: "0 0 12px 2px rgba(184,137,75,.55)" }} />
       </span>
       {/* knot at the end */}
       <span className="spine-knot absolute left-1/2 bottom-0 w-2.5 h-2.5 rounded-full border border-[var(--color-brass)] bg-[var(--color-ink)]" style={{ transform: "translate(-50%,-50%) scale(0)" }} />

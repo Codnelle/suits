@@ -6,9 +6,14 @@ import { copy } from "@/lib/copy";
 import { openBooking } from "@/lib/booking";
 import Magnetic from "@/components/ui/Magnetic";
 
+// The closing invitation — a full-viewport restatement of the commission,
+// the last door before the footer.
 export default function Invitation() {
+  // locations are derived from the ateliers so there's no duplicated copy
+  const locations = copy.invitation.ateliers.map((a) => `${a.city} — ${a.address}`);
+
   return (
-    <section id="invitation" className="relative min-h-[100svh] grid place-items-center bg-[var(--color-ink)] py-28 overflow-hidden">
+    <section id="appointment" className="relative min-h-[100svh] grid place-items-center bg-[var(--color-ink)] py-28 overflow-hidden">
       <img
         src="/media/suit-complete.webp"
         alt=""
@@ -17,11 +22,11 @@ export default function Invitation() {
         style={{ opacity: 0.16 }}
       />
       {/* light bloom lifts the copy off the watermark */}
-      <span aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(52% 40% at 50% 46%, var(--color-ink) 0%, rgba(233,227,217,0.7) 45%, transparent 72%)" }} />
+      <span aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(52% 40% at 50% 46%, var(--color-ink) 0%, rgba(235,229,219,0.7) 45%, transparent 72%)" }} />
       <span aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(120% 88% at 50% 45%, transparent 58%, var(--color-ink))" }} />
 
       <div className="relative z-10 text-center px-6 max-w-2xl">
-        <SectionLabel n={copy.invitation.label}>{copy.invitation.tag}</SectionLabel>
+        <SectionLabel n="10">{copy.invitation.tag}</SectionLabel>
         <RevealText
           as="h2"
           className="display text-[clamp(38px,6vw,84px)] mt-6 mb-8 text-[var(--color-bone)]"
@@ -39,7 +44,7 @@ export default function Invitation() {
         </Magnetic>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-16">
-          {copy.invitation.locations.map((l) => (
+          {locations.map((l) => (
             <span key={l} className="text-[12px] text-[var(--color-ash)]">{l}</span>
           ))}
         </div>

@@ -119,7 +119,7 @@ export default function AssemblyCanvas() {
           }
           // aria-label at act boundaries
           const ai = self.progress < 0.33 ? 0 : self.progress < 0.6 ? 1 : 2;
-          canvas.setAttribute("aria-label", `The Anatomy of a Suit — Act ${acts[ai].n}, ${acts[ai].title}`);
+          canvas.setAttribute("aria-label", `Shahee — Made to Measure — Act ${acts[ai].n}, ${acts[ai].title}`);
         },
       },
     });
@@ -181,7 +181,7 @@ export default function AssemblyCanvas() {
         <canvas
           ref={canvasRef}
           role="img"
-          aria-label="The Anatomy of a Suit — assembly"
+          aria-label="Shahee — Made to Measure — assembly"
           className="absolute inset-0 w-full h-full"
         />
 

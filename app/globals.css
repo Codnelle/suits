@@ -1,16 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  /* LIGHT palette — page ground matches the assembly film's studio backdrop */
-  --color-ink:      #E9E3D9;  /* page background (warm bone, = film ground) */
-  --color-cloud:    #FBF8F2;  /* elevated surface */
-  --color-charcoal: #FBFAF7;  /* card / drawer (light) */
-  --color-bone:     #17181C;  /* primary text (dark) */
-  --color-graphite: #2A2B30;  /* strong text / dark blocks */
-  --color-ash:      #6E6A61;  /* muted text */
-  --color-brass:    #9A7B3C;  /* accent */
-  --color-oxblood:  #5A1A26;
-  --color-line:     rgba(23,24,28,0.12);
+  /* HALDANE & CO. palette — seven swatches, one wardrobe.
+     Onyx and graphite do the tailoring. Chalk and oyster are the shirting.
+     Brass is the button — one per garment. Oxblood is the lining nobody sees.
+     The film section is a light "chalk room"; its ground stays warm to blend
+     into the assembly frames (~#E6E0D7). */
+
+  /* — brand swatches (name the material) — */
+  --color-onyx:     #14161A;  /* PRIMARY · 60% */
+  --color-graphite: #2A2E34;  /* SECONDARY */
+  --color-smoke:    #8B9099;  /* TERTIARY */
+  --color-brass:    #B8894B;  /* ACCENT · 5% */
+  --color-oxblood:  #5E2028;  /* ACCENT · lining */
+  --color-oyster:   #D9D2C5;  /* SURFACE */
+  --color-chalk:    #F2EFE9;  /* SURFACE */
+
+  /* — semantic roles (used across the build) — */
+  --color-ink:      #EBE5DB;  /* page / film ground (warm chalk, blends frames) */
+  --color-cloud:    #F2EFE9;  /* elevated surface (chalk) */
+  --color-charcoal: #F6F3ED;  /* card / drawer (lightest chalk) */
+  --color-bone:     #14161A;  /* primary text (onyx) */
+  --color-ash:      #575C64;  /* muted text (deep smoke, for legibility) */
+  --color-line:     rgba(20,22,26,0.14);
   --ease-cloth: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -21,7 +33,7 @@ html, body {
   margin: 0; padding: 0;
   background: var(--color-ink);
   color: var(--color-bone);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -38,17 +50,56 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 img, canvas, video, svg { display: block; max-width: 100%; }
 
 /* ---- Type primitives ---- */
+/* DISPLAY — Bodoni Moda. Headlines, cloth names, prices. */
 .display {
-  font-family: var(--font-playfair), Georgia, serif;
-  font-weight: 400; line-height: 0.98; letter-spacing: -0.02em;
+  font-family: var(--font-display), "Didot", Georgia, serif;
+  font-weight: 500; line-height: 0.98; letter-spacing: -0.015em;
 }
-.display em { font-style: italic; }
+.display em { font-style: italic; color: var(--color-brass); }
 
-.body-copy { font-size: clamp(15px, 1.05vw, 17px); line-height: 1.75; color: var(--color-ash); max-width: 40ch; }
+/* BODY — Archivo. Anything a customer must read to buy. 60–70ch a line. */
+.body-copy { font-family: var(--font-body), system-ui, sans-serif; font-size: clamp(15px, 1.05vw, 17px); line-height: 1.7; color: var(--color-ash); max-width: 42ch; }
 
-.label { font-family: var(--font-inter), sans-serif; font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: 0.28em; color: var(--color-brass); }
+/* MONO — JetBrains Mono. Eyebrows, spec tags, section numbers, swatch codes. */
+.label { font-family: var(--font-mono), ui-monospace, monospace; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--color-brass); }
+.mono { font-family: var(--font-mono), ui-monospace, monospace; }
+
+/* ---- Type scale — the ladder (Bodoni display / Archivo body / JetBrains mono) ---- */
+.t-d1 { font-size: clamp(56px, 12vw, 128px); line-height: 0.90; letter-spacing: -0.02em; }
+.t-d2 { font-size: clamp(46px, 8.5vw, 92px);  line-height: 0.92; letter-spacing: -0.02em; }
+.t-h1 { font-size: clamp(38px, 5.4vw, 60px);  line-height: 0.98; letter-spacing: -0.015em; }
+.t-h2 { font-size: clamp(28px, 3.4vw, 38px);  line-height: 1.08; }
+.t-h3 { font-size: clamp(20px, 2.1vw, 24px);  line-height: 1.15; }
+.t-blg { font-size: clamp(17px, 1.4vw, 19px); line-height: 1.55; }
+.t-b  { font-size: 16px; line-height: 1.55; }
+.t-bsm { font-size: 14px; line-height: 1.50; }
 
 :focus-visible { outline: 1px solid var(--color-brass); outline-offset: 2px; }
+
+/* ---- Seam-stitch rule — the site's only divider, a dashed stitch in brass ---- */
+/* horizontal divider */
+.stitch-rule { height: 1px; border: 0; background-image: repeating-linear-gradient(to right, var(--color-brass) 0 8px, transparent 8px 15px); background-repeat: repeat-x; background-size: auto 1px; opacity: 0.85; }
+/* the underline on every link + hover: a stitch drawn left→right on hover */
+.stitch-link { position: relative; display: inline; }
+.stitch-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px;
+  background-image: repeating-linear-gradient(to right, var(--color-brass) 0 6px, transparent 6px 11px);
+  background-size: 200% 2px; background-position: 100% 0; background-repeat: no-repeat;
+  transform: scaleX(0); transform-origin: left; transition: transform 420ms var(--ease-cloth);
+}
+.stitch-link:hover::after, .stitch-link:focus-visible::after { transform: scaleX(1); }
+
+/* ---- Spec tag — mono label pinned with a hairline leader (exploded-diagram) ---- */
+.spec-leader { position: relative; }
+.spec-leader::before { content: ""; position: absolute; top: 50%; height: 1px; background: var(--color-brass); opacity: 0.6; }
+
+/* ---- Weave texture — faint herringbone over surfaces, ~4% (cloth held to light) ---- */
+.weave {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23141518' stroke-width='1.4'%3E%3Cpath d='M0 6 L6 0 M0 12 L12 0 M6 12 L12 6'/%3E%3Cpath d='M12 6 L18 0 M12 12 L24 0 M18 12 L24 6'/%3E%3Cpath d='M0 18 L6 12 M0 24 L12 12 M6 24 L12 18'/%3E%3Cpath d='M12 18 L18 12 M12 24 L24 12 M18 24 L24 18'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 22px 22px;
+}
 
 .reveal-line { display: block; overflow: hidden; }
 .reveal-line > span { display: block; will-change: transform; }
@@ -86,6 +137,37 @@ img, canvas, video, svg { display: block; max-width: 100%; }
 
 .tabular-nums { font-variant-numeric: tabular-nums; }
 
+/* ---- Tape-measure cursor — a thin crosshair that follows the pointer,
+   growing a brass readout over anything it can measure ([data-measure]). ---- */
+@media (hover: hover) and (pointer: fine) {
+  html.tape-on, html.tape-on * { cursor: none; }
+  html.tape-on input, html.tape-on textarea { cursor: text; }
+}
+.tape { position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none; transform: translate3d(-100px,-100px,0); mix-blend-mode: difference; will-change: transform; }
+.tape-h { position: absolute; left: -13px; top: 0; width: 26px; height: 1px; background: #fff; }
+.tape-v { position: absolute; top: -13px; left: 0; width: 1px; height: 26px; background: #fff; }
+.tape-read {
+  position: absolute; left: 16px; top: 10px; white-space: nowrap;
+  font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #fff; background: var(--color-brass); padding: 3px 7px; border-radius: 2px;
+  opacity: 0; transform: translateX(-4px) scale(0.96); transform-origin: left center;
+  transition: opacity 200ms var(--ease-cloth), transform 200ms var(--ease-cloth);
+}
+.tape.measuring .tape-read { opacity: 1; transform: translateX(0) scale(1); }
+.tape.measuring .tape-h, .tape.measuring .tape-v { background: var(--color-brass); }
+
+/* ---- Chalk marks — hand-drawn tailor's annotations over photography ---- */
+.chalk { position: absolute; pointer-events: none; color: #F6F2EA; opacity: 0.9; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); z-index: 3; }
+.chalk svg { overflow: visible; }
+.chalk .chalk-draw { stroke-dasharray: var(--len, 400); stroke-dashoffset: var(--len, 400); }
+.chalk.drawn .chalk-draw { animation: chalk-draw 1s var(--ease-cloth) forwards; }
+@keyframes chalk-draw { to { stroke-dashoffset: 0; } }
+
+/* ---- Raking light — a highlight that rakes across cloth on hover ---- */
+.rake { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 400ms var(--ease-cloth); mix-blend-mode: soft-light;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.55) var(--rx, 50%), transparent 65%); }
+.group:hover .rake { opacity: 1; }
+
 /* booking inputs */
 .input { width: 100%; background: var(--color-ink); border: 1px solid var(--color-line); border-radius: 3px; color: var(--color-bone); font-family: inherit; font-size: 14px; padding: 12px 14px; }
 .input::placeholder { color: var(--color-ash); }
@@ -94,4 +176,8 @@ img, canvas, video, svg { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   .hotspot-pulse::after, .cue-pulse, .grain { animation: none !important; }
+  /* reduced-motion: no crosshair cursor, chalk shown already drawn */
+  html.tape-on, html.tape-on * { cursor: auto !important; }
+  .tape { display: none !important; }
+  .chalk .chalk-draw { stroke-dashoffset: 0 !important; }
 }

@@ -32,7 +32,7 @@ export default function Nav() {
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[var(--pad,clamp(20px,4.5vw,64px))] py-5"
         style={{ mixBlendMode: "difference", ["--pad" as string]: "clamp(20px,4.5vw,64px)" }}
       >
-        <a href="#top" className="font-[family-name:var(--font-playfair)] text-[15px] tracking-[0.28em] text-white">
+        <a href="#top" className="font-[family-name:var(--font-display)] text-[15px] tracking-[0.28em] text-white">
           {copy.nav.wordmark}
         </a>
 

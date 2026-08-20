@@ -1,35 +1,47 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Bodoni_Moda, Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import BookBar from "@/components/ui/BookBar";
+import TapeCursor from "@/components/ui/TapeCursor";
 
-const playfair = Playfair_Display({
+// DISPLAY — Bodoni Moda. High contrast, sharp serifs. The house voice.
+const bodoni = Bodoni_Moda({
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "700"],
   style: ["normal", "italic"],
-  variable: "--font-playfair",
+  variable: "--font-display",
   display: "swap",
 });
 
-const inter = Inter({
+// BODY — Archivo. A neutral grotesk with good bones. The workhorse.
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+// MONO — JetBrains Mono. The tape measure: numbers and section markers.
+const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-inter",
+  variable: "--font-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Ashford & Vane — The Anatomy of a Suit",
+  title: "Shahee Suits — Royal Indian Luxury",
   description:
-    "Bespoke tailoring since 1887. A suit, assembled layer by layer. Full canvas, hand finished, cut for one man and one body.",
+    "Made for the discerning, tailored for you. Bespoke, made-to-measure suits with Master G at your doorstep in Bengaluru — the finest silks, chanderi and banarasi, cut for one man and no other.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${bodoni.variable} ${archivo.variable} ${mono.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <div className="grain" aria-hidden />
+        <TapeCursor />
         <BookBar />
         <SmoothScroll>{children}</SmoothScroll>
       </body>

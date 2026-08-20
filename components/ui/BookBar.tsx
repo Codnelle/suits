@@ -31,7 +31,9 @@ export default function BookBar() {
         pointerEvents: show && !hidden ? "auto" : "none",
       }}
     >
-      <a href="#top" className="font-[family-name:var(--font-playfair)] text-[15px] tracking-[0.14em] text-[var(--color-bone)]">{copy.hero.brand}</a>
+      <a href="#top" aria-label={copy.hero.brand}>
+        <img src="/media/shahee-logo.png" alt={copy.hero.brand} className="h-[18px] w-auto" />
+      </a>
       <button
         onClick={openBooking}
         className="text-[11px] uppercase tracking-[0.2em] px-5 py-2.5 rounded-full border border-[var(--color-bone)]/25 text-[var(--color-bone)] hover:bg-[var(--color-bone)] hover:text-white transition-colors"

@@ -76,7 +76,7 @@ export default function Threshold() {
           {/* top meta bar */}
           <div className="flex items-center justify-between">
             <span className="meta label hidden sm:block">{a.estLeft}</span>
-            <span className="meta font-[family-name:var(--font-playfair)] text-[15px] tracking-[0.4em] text-[var(--color-bone)]">{a.crest}</span>
+            <span className="meta font-[family-name:var(--font-display)] text-[15px] tracking-[0.4em] text-[var(--color-bone)]">{a.crest}</span>
             <span className="meta label hidden sm:block">{a.estRight}</span>
           </div>
 
