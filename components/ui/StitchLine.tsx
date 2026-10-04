@@ -16,17 +16,17 @@ export default function StitchLine() {
     if (!el) return;
     const section = el.parentElement as HTMLElement | null;
     if (!section) return;
-    const reveal = el.querySelector<HTMLElement>(".spine-reveal");
+    const reveal = el.querySelector<HTMLElement>(".spine-reveal > span");
     const needle = el.querySelector<HTMLElement>(".spine-needle");
     const knot = el.querySelector<HTMLElement>(".spine-knot");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduce) {
-      if (reveal) reveal.style.clipPath = "inset(0 0 0 0)";
+      if (reveal) reveal.style.transform = "scaleY(1)";
       if (needle) needle.style.opacity = "0";
       return;
     }
-    if (reveal) reveal.style.clipPath = "inset(0 0 100% 0)";
+    if (reveal) reveal.style.transform = "scaleY(0)";
     if (needle) needle.style.opacity = "0";
     if (knot) knot.style.transform = "translate(-50%,-50%) scale(0)";
 
@@ -37,7 +37,7 @@ export default function StitchLine() {
       scrub: 0.5,
       onUpdate: (self) => {
         const p = self.progress;
-        if (reveal) reveal.style.clipPath = `inset(0 0 ${(1 - p) * 100}% 0)`;
+        if (reveal) reveal.style.transform = `scaleY(${p})`;
         if (needle) {
           needle.style.top = `${p * 100}%`;
           needle.style.opacity = p > 0.004 && p < 0.996 ? "1" : "0";
@@ -49,14 +49,15 @@ export default function StitchLine() {
   }, []);
 
   return (
-    <div ref={wrap} className="pointer-events-none absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 z-0" aria-hidden>
+    <div ref={wrap} className="pointer-events-none absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 -z-10" aria-hidden>
       {/* faint full guide */}
       <span className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-[var(--color-line)]" />
-      {/* running stitch, revealed as it is sewn */}
+      {/* running stitch, revealed as it is sewn — scaled, not clipped, so it
+          stays on the compositor instead of repainting the whole section */}
       <div className="spine-reveal absolute inset-0">
         <span
-          className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1.5px]"
-          style={{ background: "repeating-linear-gradient(to bottom, var(--color-brass) 0 7px, transparent 7px 14px)" }}
+          className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1.5px] origin-top will-change-transform"
+          style={{ background: "repeating-linear-gradient(to bottom, var(--color-brass) 0 7px, transparent 7px 14px)", transform: "scaleY(0)" }}
         />
       </div>
       {/* the needle */}

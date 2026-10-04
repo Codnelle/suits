@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { refreshScrollTriggers } from "@/lib/scroll";
 
 // Lenis wired into GSAP's ticker (not running its own RAF).
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
@@ -21,7 +22,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     gsap.ticker.lagSmoothing(0);
 
     // refresh once fonts settle to fix pin math
-    if (document.fonts?.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+    if (document.fonts?.ready) document.fonts.ready.then(() => refreshScrollTriggers());
 
     return () => {
       lenis.off("scroll", onScroll);

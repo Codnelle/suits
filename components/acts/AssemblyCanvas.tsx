@@ -4,8 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useImageSequence, nearestLoaded } from "@/lib/useImageSequence";
 import { copy } from "@/lib/copy";
+import { refreshScrollTriggers } from "@/lib/scroll";
 import Hotspot from "@/components/ui/Hotspot";
 import SectionLabel from "@/components/ui/SectionLabel";
+import ChapterRule from "@/components/ui/ChapterRule";
 
 const DESKTOP_COUNT = 120;
 const MOBILE_COUNT = 60;
@@ -83,7 +85,7 @@ export default function AssemblyCanvas() {
       clearTimeout(t);
       t = setTimeout(() => {
         size();
-        ScrollTrigger.refresh();
+        refreshScrollTriggers();
       }, 150);
     };
     window.addEventListener("resize", onResize);
@@ -100,7 +102,7 @@ export default function AssemblyCanvas() {
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
 
-    const acts = copy.assembly.acts;
+    const acts = copy.masterg.acts;
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -118,8 +120,8 @@ export default function AssemblyCanvas() {
             layer.style.pointerEvents = on ? "auto" : "none";
           }
           // aria-label at act boundaries
-          const ai = self.progress < 0.33 ? 0 : self.progress < 0.6 ? 1 : 2;
-          canvas.setAttribute("aria-label", `Shahee — Made to Measure — Act ${acts[ai].n}, ${acts[ai].title}`);
+          const ai = self.progress < 0.24 ? 0 : self.progress < 0.47 ? 1 : self.progress < 0.72 ? 2 : 3;
+          canvas.setAttribute("aria-label", `Shahee — Master G at Home — Step ${acts[ai].n}, ${acts[ai].title}`);
         },
       },
     });
@@ -139,7 +141,7 @@ export default function AssemblyCanvas() {
     const tick = () => draw();
     gsap.ticker.add(tick);
 
-    ScrollTrigger.refresh();
+    refreshScrollTriggers();
 
     return () => {
       gsap.ticker.remove(tick);
@@ -148,18 +150,18 @@ export default function AssemblyCanvas() {
     };
   }, [reduce, gateReady, count, draw]);
 
-  const acts = copy.assembly.acts;
+  const acts = copy.masterg.acts;
 
-  // ---------- reduced-motion: six static key frames, vertical, same copy ----------
+  // ---------- reduced-motion: static key frames, vertical, same copy ----------
   if (reduce) {
-    const keys = [0, 39, 60, 71, 96, 119];
+    const keys = [0, 14, 32, 48, 66, 80, 100, 119];
     return (
-      <section id="assembly" className="bg-[var(--color-ink)]">
+      <section id="master-g" className="bg-[var(--color-ink)]">
         {keys.map((k, i) => {
           const act = acts[Math.min(acts.length - 1, Math.floor(i / 2))];
           return (
             <div key={k} className="min-h-[100svh] grid md:grid-cols-2 items-center gap-10 px-[clamp(20px,5vw,80px)] py-24">
-              <img src={`/sequence/frame-${pad(k)}.webp`} alt={`Suit assembly, stage ${i + 1}`} className="w-full max-w-[520px] mx-auto" />
+              <img src={`/sequence/frame-${pad(k)}.webp`} alt={`The making of a suit, stage ${i + 1}`} className="w-full max-w-[520px] mx-auto" />
               {i % 2 === 0 && (
                 <div className="max-w-md">
                   <SectionLabel n={act.n}>{act.label}</SectionLabel>
@@ -176,12 +178,15 @@ export default function AssemblyCanvas() {
 
   // ---------- the pinned assembly ----------
   return (
-    <section ref={containerRef} id="assembly" className="relative h-[600svh] bg-[var(--color-ink)]">
+    <section ref={containerRef} id="master-g" className="relative h-[620svh] bg-[var(--color-ink)]">
       <div ref={wrapRef} className="sticky top-0 h-[100svh] overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 z-10 px-[clamp(20px,5vw,80px)] pt-7 opacity-80 pointer-events-none">
+          <ChapterRule n={copy.masterg.label} label={copy.masterg.tag} right="THE MAKING" />
+        </div>
         <canvas
           ref={canvasRef}
           role="img"
-          aria-label="Shahee — Made to Measure — assembly"
+          aria-label="Shahee — Master G at Home — the making of a suit"
           className="absolute inset-0 w-full h-full"
         />
 

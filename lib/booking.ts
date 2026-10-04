@@ -1,3 +1,11 @@
-export function openBooking() {
-  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("open-booking"));
+export type BookingPrefill = {
+  note?: string;
+  label?: string;
+};
+
+export function openBooking(prefill?: BookingPrefill) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent<BookingPrefill | undefined>("open-booking", { detail: prefill })
+  );
 }

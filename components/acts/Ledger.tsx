@@ -1,12 +1,15 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { copy } from "@/lib/copy";
 import Reveal from "@/components/ui/Reveal";
 
-// The Ledger — a living archive footer: house links, the journal, the ateliers.
+// The Ledger — a living archive footer: house links, the journal, the zones.
 export default function Ledger() {
   const { columns, journal, edition, copyright } = copy.colophon;
-  const ateliers = copy.invitation.ateliers;
+  const zones = copy.booking.zones;
+  const router = useRouter();
 
   return (
     <footer className="bg-[var(--color-ink)] px-[clamp(20px,5vw,80px)] pt-20 pb-12">
@@ -40,13 +43,16 @@ export default function Ledger() {
         {/* visit */}
         <div>
           <span className="label mb-6 block">Visit</span>
-          {ateliers.map((a) => (
-            <div key={a.city} className="py-3 border-b border-[var(--color-ash)]/10">
-              <p className="text-[13px] text-[var(--color-bone)]">{a.city} — {a.address}</p>
-              <p className="text-[12px] text-[var(--color-ash)] mt-1">{a.cutter} · {a.tenure}</p>
-              <a href={`mailto:${a.email}`} className="stitch-link inline-block text-[12px] text-[var(--color-brass)] transition-colors">{a.email}</a>
+          {zones.map((z) => (
+            <div key={z.id} className="py-3 border-b border-[var(--color-ash)]/10">
+              <p className="text-[13px] text-[var(--color-bone)]">{z.name} — {z.areas}</p>
+              <p className="mono text-[10px] tracking-[0.14em] text-[var(--color-ash)] mt-1">{z.pincodes} · {z.note}</p>
+              <a href={`mailto:${copy.booking.email}`} className="stitch-link inline-block text-[12px] text-[var(--color-brass)] transition-colors">{copy.booking.email}</a>
             </div>
           ))}
+          <Link href="/order" onClick={() => router.push("/order")} className="stitch-link inline-block text-[12px] text-[var(--color-brass)] transition-colors mt-4">
+            {copy.booking.notInBangalore}
+          </Link>
         </div>
       </Reveal>
 

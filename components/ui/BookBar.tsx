@@ -35,7 +35,7 @@ export default function BookBar() {
         <img src="/media/shahee-logo.png" alt={copy.hero.brand} className="h-[18px] w-auto" />
       </a>
       <button
-        onClick={openBooking}
+        onClick={() => openBooking()}
         className="text-[11px] uppercase tracking-[0.2em] px-5 py-2.5 rounded-full border border-[var(--color-bone)]/25 text-[var(--color-bone)] hover:bg-[var(--color-bone)] hover:text-white transition-colors"
       >
         {copy.hero.cta}

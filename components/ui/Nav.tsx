@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { copy } from "@/lib/copy";
+import { openBooking } from "@/lib/booking";
 
 export default function Nav() {
   const ref = useRef<HTMLElement>(null);
@@ -38,16 +39,16 @@ export default function Nav() {
 
         <nav className="hidden md:flex items-center gap-8">
           {copy.nav.links.map((l) => (
-            <a key={l} href="#" className="label !text-white/80 hover:!text-white transition-colors">
-              {l}
+            <a key={l.label} href={l.href} className="label !text-white/80 hover:!text-white transition-colors">
+              {l.label}
             </a>
           ))}
-          <a
-            href="#invitation"
+          <button
+            onClick={() => openBooking()}
             className="label !text-white border border-white/60 px-4 py-2.5 hover:bg-white hover:!text-black transition-colors"
           >
             {copy.nav.cta}
-          </a>
+          </button>
         </nav>
 
         <button
@@ -69,16 +70,25 @@ export default function Nav() {
         style={{ clipPath: open ? "inset(0 0 0 0)" : "inset(0 0 100% 0)" }}
         aria-hidden={!open}
       >
-        {[...copy.nav.links, copy.nav.cta].map((l) => (
+        {copy.nav.links.map((l) => (
           <a
-            key={l}
-            href="#invitation"
+            key={l.label}
+            href={l.href}
             onClick={() => setOpen(false)}
             className="display text-[clamp(34px,10vw,56px)] text-[var(--color-bone)]"
           >
-            {l}
+            {l.label}
           </a>
         ))}
+        <button
+          onClick={() => {
+            setOpen(false);
+            openBooking();
+          }}
+          className="display text-[clamp(34px,10vw,56px)] text-[var(--color-brass)] text-left"
+        >
+          {copy.nav.cta}
+        </button>
       </div>
     </>
   );

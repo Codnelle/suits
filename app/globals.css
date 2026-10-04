@@ -80,7 +80,7 @@ img, canvas, video, svg { display: block; max-width: 100%; }
 /* horizontal divider */
 .stitch-rule { height: 1px; border: 0; background-image: repeating-linear-gradient(to right, var(--color-brass) 0 8px, transparent 8px 15px); background-repeat: repeat-x; background-size: auto 1px; opacity: 0.85; }
 /* the underline on every link + hover: a stitch drawn left→right on hover */
-.stitch-link { position: relative; display: inline; }
+.stitch-link { position: relative; }
 .stitch-link::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px;
   background-image: repeating-linear-gradient(to right, var(--color-brass) 0 6px, transparent 6px 11px);
@@ -135,6 +135,27 @@ img, canvas, video, svg { display: block; max-width: 100%; }
 .cue-pulse { animation: cue 3s ease-in-out infinite; }
 @keyframes cue { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
+/* ---- The hush — a slow warp of threads behind the founder's note.
+   Transform-only, very low opacity: it moves, it never asks for attention. ---- */
+.warp {
+  position: absolute; inset: -25% -12%; z-index: 0; pointer-events: none; opacity: 0.5;
+  background-image: repeating-linear-gradient(90deg, var(--color-line) 0 1px, transparent 1px 58px);
+  -webkit-mask-image: radial-gradient(70% 62% at 50% 44%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(70% 62% at 50% 44%, #000 20%, transparent 78%);
+  animation: warp 48s linear infinite;
+}
+.hush {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(48% 34% at 22% 26%, rgba(184,137,75,0.14) 0%, transparent 70%),
+              radial-gradient(46% 32% at 78% 68%, rgba(20,22,26,0.10) 0%, transparent 72%);
+  animation: hush 22s ease-in-out infinite alternate;
+}
+@keyframes warp { from { transform: translate3d(0,0,0) } to { transform: translate3d(-58px,0,0) } }
+@keyframes hush {
+  from { transform: translate3d(0,0,0) scale(1); opacity: 0.7 }
+  to { transform: translate3d(2%,-1.5%,0) scale(1.06); opacity: 1 }
+}
+
 .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* ---- Tape-measure cursor — a thin crosshair that follows the pointer,
@@ -146,15 +167,25 @@ img, canvas, video, svg { display: block; max-width: 100%; }
 .tape { position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none; transform: translate3d(-100px,-100px,0); mix-blend-mode: difference; will-change: transform; }
 .tape-h { position: absolute; left: -13px; top: 0; width: 26px; height: 1px; background: #fff; }
 .tape-v { position: absolute; top: -13px; left: 0; width: 1px; height: 26px; background: #fff; }
-.tape-read {
-  position: absolute; left: 16px; top: 10px; white-space: nowrap;
-  font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: #fff; background: var(--color-brass); padding: 3px 7px; border-radius: 2px;
-  opacity: 0; transform: translateX(-4px) scale(0.96); transform-origin: left center;
-  transition: opacity 200ms var(--ease-cloth), transform 200ms var(--ease-cloth);
-}
-.tape.measuring .tape-read { opacity: 1; transform: translateX(0) scale(1); }
 .tape.measuring .tape-h, .tape.measuring .tape-v { background: var(--color-brass); }
+
+/* The readout — a solid brass tag pinned next to the crosshair. It is NOT in the
+   difference-blended layer, so ink-on-brass keeps its contrast over light cloth,
+   dark cloth or photography alike. */
+.tape-read {
+  position: fixed; top: 0; left: 0; z-index: 91; pointer-events: none;
+  margin: 14px 0 0 20px;
+  white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis;
+  font-family: var(--font-mono), monospace; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #1B1206; background: var(--color-brass);
+  padding: 4px 9px 3px; border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(27,18,6,.28), 0 6px 18px -8px rgba(20,20,25,.6);
+  opacity: 0; scale: 0.94;
+  transform-origin: left center;
+  transition: opacity 160ms var(--ease-cloth), scale 160ms var(--ease-cloth);
+}
+.tape-read.measuring { opacity: 1; scale: 1; }
 
 /* ---- Chalk marks — hand-drawn tailor's annotations over photography ---- */
 .chalk { position: absolute; pointer-events: none; color: #F6F2EA; opacity: 0.9; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); z-index: 3; }

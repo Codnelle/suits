@@ -75,7 +75,7 @@ export default function Hero() {
             <p className="max-w-[34ch] text-[clamp(15px,1.2vw,18px)] text-white/85 leading-relaxed">{h.sub}</p>
             <Magnetic className="shrink-0">
               <button
-                onClick={openBooking}
+                onClick={() => openBooking()}
                 className="group inline-flex items-center gap-4 pl-7 pr-2 py-2 rounded-full bg-white text-[var(--color-bone)] transition-colors hover:bg-[var(--color-brass)] hover:text-white"
               >
                 <span className="text-[12px] tracking-[0.18em] uppercase font-medium">{h.cta}</span>
