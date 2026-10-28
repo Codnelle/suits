@@ -4,20 +4,43 @@ export const copy = {
   hero: {
     brand: "SHAHEE",
     pills: ["Made to Measure", "Bengaluru", "Master G at Home"],
-    tag: "A LEGACY TO CARRY",
+    tag: "MADE TO MEASURE · BENGALURU",
     words: ["SHAHEE"],
-    sub: "Made for the discerning, tailored for you.",
-    cta: "BOOK TAILOR",
+    sub: "Master G brings the cloth, the tape and thirty years of hand to your door.",
+    cta: "BOOK A FITTING",
     menu: "MENU",
+  },
+
+  // The Vero-structured story between the hero and the collection.
+  story: {
+    // two lines across the pinned assembly — the second lands on the finished suit
+    open: { a: "A SUIT", conn: "is never", b: "BOUGHT." },
+    close: { a: "IT IS", conn: "built,", b: "AROUND YOU." },
+    studio: {
+      lead: "Shahee is a made-to-measure house that brings the atelier to your door.",
+      body:
+        "Every suit is cut by hand for one man, from nineteen measurements taken in your own home — royal Indian silks, chanderi, banarasi and the finest wools, fitted in the light you will actually be seen in.",
+    },
+    essence: { eyebrow: ["the", "ESSENCE", "of", "SHAHEE"], line1: ["where", "HERITAGE"], line2: ["meets", "MEASURE."] },
+    process: {
+      steps: [
+        { conn: "From your", word: "DOOR", line: "Choose a two-hour window. Master G arrives with the full catalogue and his kit.", media: "process-door.webp" },
+        { conn: "to the", word: "CLOTH", line: "Four houses of cloth open at your table, to be felt in your own light.", media: "process-cloth.webp" },
+        { conn: "to the", word: "TAPE", line: "Nineteen measurements, read by a tailor of thirty years.", media: "process-measure.webp" },
+        { conn: "to the", word: "FITTING.", line: "Your trial — and later your suit — arrive at the same door.", media: "process-fitting.webp" },
+      ],
+      closeA: ["so", "THAT"],
+      closeB: ["the suit", "BECOMES YOU."],
+    },
   },
 
   // 01 — Master G at Home. The pinned scroll-make, then the four stages.
   masterg: {
     label: "01",
     tag: "MASTER G AT HOME",
-    title: "The Grandeur of Made to Measure, at Your Doorstep",
+    title: "The tailor comes to you.",
     body:
-      "Book a slot and Master G arrives with the complete Shahee catalogue — every house, every cloth, carried to your door. From measure to trial to delivery, nothing asks you to step out of the house.",
+      "Measuring, fitting and delivery, all at your own table. Book a window and Master G brings the house to your door — in Bengaluru, there is nothing to step out for.",
     cta: "BOOK MASTER G",
     acts: [
       {
@@ -61,7 +84,7 @@ export const copy = {
       {
         k: "APPOINTMENT",
         title: "You book a slot",
-        body: "Choose a date and a window online. Master G arrives at your doorstep with the complete Shahee catalogue — no visit fee shock, no surprise at the end.",
+        body: "Pick a date and a two-hour window online. Master G arrives with the full catalogue and the measuring kit — you never leave your chair.",
         media: "fit-tailored.jpg",
       },
       {
@@ -127,7 +150,7 @@ export const copy = {
     label: "02",
     tag: "THE COLLECTION",
     title: "Curated by House",
-    lead: "Four houses, one wardrobe. Every cloth below is available to feel at home — ranges shown are per full suit, made to measure.",
+    lead: "Every cloth is yours to feel in your own light — ranges are per full suit, made to measure.",
     browseCta: "Open this house with Master G",
     allHouses: "ALL HOUSES",
     houses: [

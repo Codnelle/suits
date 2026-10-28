@@ -1,21 +1,31 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { useImageSequence, nearestLoaded } from "@/lib/useImageSequence";
 import { copy } from "@/lib/copy";
 import { refreshScrollTriggers } from "@/lib/scroll";
 import Hotspot from "@/components/ui/Hotspot";
-import SectionLabel from "@/components/ui/SectionLabel";
-import ChapterRule from "@/components/ui/ChapterRule";
 
 const DESKTOP_COUNT = 120;
 const MOBILE_COUNT = 60;
 const pad = (n: number) => String(n).padStart(3, "0");
 
-// hotspots live in the X-ray interior window (frames 096–107 → progress)
-const HS_IN = 0.8;
-const HS_OUT = 0.905;
+// the suit sits small between the two halves of a statement at either end,
+// and fills the frame while it is being made
+const SETTLED = 0.56;
+
+// hotspots appear once the jacket is on, before the closing line arrives
+const HS_IN = 0.55;
+const HS_OUT = 0.72;
+
+const Line = ({ a, conn, b }: { a?: string; conn?: string; b?: string }) => (
+  <>
+    {a}
+    {conn && <> <em>{conn}</em></>}
+    {b && <> {b}</>}
+  </>
+);
 
 export default function AssemblyCanvas() {
   const [isMobile, setIsMobile] = useState(false);
@@ -35,12 +45,13 @@ export default function AssemblyCanvas() {
 
   const { framesRef, gateReady, progress } = useImageSequence(count, srcFor, 15);
 
-  const wrapRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hotspotLayerRef = useRef<HTMLDivElement>(null);
-  const copyRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const proxy = useRef({ f: 0, p: 0 });
+  const openRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+  const closeRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+  const proxy = useRef({ f: 0 });
   const drawnFrame = useRef(-1);
 
   // ---- draw a frame with manual cover-fit ----
@@ -67,15 +78,17 @@ export default function AssemblyCanvas() {
   }, [framesRef, count]);
 
   // ---- canvas sizing (DPR-aware, debounced) ----
+  // Sized from layout dimensions, not getBoundingClientRect: the stage is
+  // scaled with a transform, and the backing store must stay full-size so the
+  // suit is sharp when it fills the frame.
   useEffect(() => {
     if (reduce) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const size = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
+      canvas.width = Math.round(canvas.clientWidth * dpr);
+      canvas.height = Math.round(canvas.clientHeight * dpr);
       drawnFrame.current = -1;
       draw();
     };
@@ -95,14 +108,16 @@ export default function AssemblyCanvas() {
     };
   }, [reduce, draw]);
 
-  // ---- scrub + ticker draw + overlays ----
+  // ---- scrub + ticker draw + choreography ----
   useEffect(() => {
     if (reduce || !gateReady) return;
     const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!container || !canvas) return;
+    const stage = stageRef.current;
+    if (!container || !canvas || !stage) return;
 
-    const acts = copy.masterg.acts;
+    const [openA, openB] = openRefs.current;
+    const [closeA, closeB] = closeRefs.current;
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -111,32 +126,28 @@ export default function AssemblyCanvas() {
         end: "bottom bottom",
         scrub: 0.8,
         onUpdate: (self) => {
-          proxy.current.p = self.progress;
-          // hotspot layer visibility (imperative — no re-render per frame)
           const layer = hotspotLayerRef.current;
           if (layer) {
             const on = self.progress >= HS_IN && self.progress <= HS_OUT;
             layer.style.opacity = on ? "1" : "0";
             layer.style.pointerEvents = on ? "auto" : "none";
           }
-          // aria-label at act boundaries
-          const ai = self.progress < 0.24 ? 0 : self.progress < 0.47 ? 1 : self.progress < 0.72 ? 2 : 3;
-          canvas.setAttribute("aria-label", `Shahee — Master G at Home — Step ${acts[ai].n}, ${acts[ai].title}`);
         },
       },
     });
-    // frame proxy across the whole distance
+
+    // the frame sequence runs the whole distance
     tl.to(proxy.current, { f: count - 1, ease: "none", duration: 1 }, 0);
 
-    // copy overlays fade in/out across their progress ranges
-    acts.forEach((act, i) => {
-      const el = copyRefs.current[i];
-      if (!el) return;
-      const [s, e] = act.range;
-      gsap.set(el, { opacity: 0, y: 24 });
-      tl.to(el, { opacity: 1, y: 0, duration: 0.05, ease: "cloth" }, s);
-      tl.to(el, { opacity: 0, y: -24, duration: 0.05, ease: "cloth" }, Math.max(s + 0.05, e - 0.05));
-    });
+    // opening: the statement parts, the suit comes forward to be made
+    tl.to(openA, { opacity: 0, yPercent: -60, duration: 0.08, ease: "power2.in" }, 0.07);
+    tl.to(openB, { opacity: 0, yPercent: 60, duration: 0.08, ease: "power2.in" }, 0.07);
+    tl.to(stage, { scale: 1, duration: 0.13, ease: "power2.inOut" }, 0.08);
+
+    // closing: the finished suit settles back, and the line closes around it
+    tl.to(stage, { scale: SETTLED, duration: 0.13, ease: "power2.inOut" }, 0.78);
+    tl.fromTo(closeA, { opacity: 0, yPercent: -60 }, { opacity: 1, yPercent: 0, duration: 0.09, ease: "cloth" }, 0.84);
+    tl.fromTo(closeB, { opacity: 0, yPercent: 60 }, { opacity: 1, yPercent: 0, duration: 0.09, ease: "cloth" }, 0.86);
 
     const tick = () => draw();
     gsap.ticker.add(tick);
@@ -150,86 +161,74 @@ export default function AssemblyCanvas() {
     };
   }, [reduce, gateReady, count, draw]);
 
-  const acts = copy.masterg.acts;
+  const { open, close } = copy.story;
 
-  // ---------- reduced-motion: static key frames, vertical, same copy ----------
+  // ---------- reduced-motion: static key frames with the same two lines ----------
   if (reduce) {
-    const keys = [0, 14, 32, 48, 66, 80, 100, 119];
     return (
-      <section id="master-g" className="bg-[var(--color-ink)]">
-        {keys.map((k, i) => {
-          const act = acts[Math.min(acts.length - 1, Math.floor(i / 2))];
-          return (
-            <div key={k} className="min-h-[100svh] grid md:grid-cols-2 items-center gap-10 px-[clamp(20px,5vw,80px)] py-24">
-              <img src={`/sequence/frame-${pad(k)}.webp`} alt={`The making of a suit, stage ${i + 1}`} className="w-full max-w-[520px] mx-auto" />
-              {i % 2 === 0 && (
-                <div className="max-w-md">
-                  <SectionLabel n={act.n}>{act.label}</SectionLabel>
-                  <h2 className="display text-[clamp(30px,4vw,52px)] mt-6 mb-6 text-[var(--color-bone)]">{act.title}</h2>
-                  <p className="body-copy">{act.body}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
+      <section id="master-g" className="bg-[var(--color-ink)] py-[16vh] text-center">
+        <p className="statement !text-[clamp(40px,6vw,96px)]"><Line {...open} /></p>
+        <div className="flex flex-wrap justify-center gap-6 my-[10vh] px-6">
+          {[0, 40, 80, 119].map((k) => (
+            <img key={k} src={`/sequence/frame-${pad(k)}.webp`} alt="" className="w-[min(40vw,320px)] mask-edges" />
+          ))}
+        </div>
+        <p className="statement !text-[clamp(40px,6vw,96px)]"><Line {...close} /></p>
       </section>
     );
   }
 
   // ---------- the pinned assembly ----------
+  const statementCls =
+    "statement absolute left-0 right-0 text-center px-6 !text-[clamp(40px,6.2vw,104px)] will-change-transform";
+
   return (
     <section ref={containerRef} id="master-g" className="relative h-[620svh] bg-[var(--color-ink)]">
-      <div ref={wrapRef} className="sticky top-0 h-[100svh] overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 z-10 px-[clamp(20px,5vw,80px)] pt-7 opacity-80 pointer-events-none">
-          <ChapterRule n={copy.masterg.label} label={copy.masterg.tag} right="THE MAKING" />
-        </div>
-        <canvas
-          ref={canvasRef}
-          role="img"
-          aria-label="Shahee — Master G at Home — the making of a suit"
-          className="absolute inset-0 w-full h-full"
-        />
-
-        {/* dissolve the pinned canvas into the ink ground at both edges */}
-        <span className="seam-top" aria-hidden />
-        <span className="seam-bottom" aria-hidden />
-
-        {/* copy overlays */}
-        <div className="absolute inset-0 pointer-events-none z-10">
-          {acts.map((act, i) => (
-            <div
-              key={act.n}
-              ref={(el) => { copyRefs.current[i] = el; }}
-              className="absolute left-[clamp(20px,5vw,80px)] bottom-[12vh] md:top-1/2 md:-translate-y-1/2 md:bottom-auto max-w-[min(90vw,420px)]"
-            >
-              <SectionLabel n={act.n}>{act.label}</SectionLabel>
-              <h2 className="display text-[clamp(28px,3.4vw,46px)] mt-5 mb-5 text-[var(--color-bone)]">{act.title}</h2>
-              <p className="body-copy">{act.body}</p>
-            </div>
-          ))}
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
+        {/* the suit — scaled as a whole so it can sit between the lines */}
+        <div
+          ref={stageRef}
+          className="absolute inset-0 mask-frame will-change-transform"
+          style={{ transform: `scale(${SETTLED})` }}
+        >
+          <canvas
+            ref={canvasRef}
+            role="img"
+            aria-label="Shahee — a suit being made, from shirt to waistcoat to jacket"
+            className="absolute inset-0 w-full h-full"
+          />
+          {/* hotspots share the canvas's coordinate space */}
+          <div ref={hotspotLayerRef} className="absolute inset-0 z-10" style={{ opacity: 0, transition: "opacity 400ms var(--ease-cloth)" }}>
+            {copy.hotspots.map((s) => (
+              <Hotspot key={s.id} spot={s} open={openSpot === s.id} onOpen={setOpenSpot} onClose={() => setOpenSpot(null)} />
+            ))}
+          </div>
         </div>
 
-        {/* hotspot layer (fitted coordinate space = canvas cover) */}
-        <div ref={hotspotLayerRef} className="absolute inset-0 z-10" style={{ opacity: 0, transition: "opacity 400ms var(--ease-cloth)" }}>
-          {copy.hotspots.map((s) => (
-            <Hotspot
-              key={s.id}
-              spot={s}
-              open={openSpot === s.id}
-              onOpen={setOpenSpot}
-              onClose={() => setOpenSpot(null)}
-            />
-          ))}
+        {/* the two statements frame the suit, above and below */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <p ref={(el) => { openRefs.current[0] = el; }} className={`${statementCls} top-[11vh]`}>
+            {open.a} <em>{open.conn}</em>
+          </p>
+          <p ref={(el) => { openRefs.current[1] = el; }} className={`${statementCls} bottom-[10vh]`}>
+            {open.b}
+          </p>
+          <p ref={(el) => { closeRefs.current[0] = el; }} className={`${statementCls} top-[11vh]`} style={{ opacity: 0 }}>
+            {close.a} <em>{close.conn}</em>
+          </p>
+          <p ref={(el) => { closeRefs.current[1] = el; }} className={`${statementCls} bottom-[10vh]`} style={{ opacity: 0 }}>
+            {close.b}
+          </p>
         </div>
 
         {/* loader gate */}
         {!gateReady && (
           <div className="absolute inset-0 z-20 grid place-items-center bg-[var(--color-ink)]">
             <div className="w-[min(60vw,320px)] text-center">
-              <div className="h-px bg-[var(--color-brass)]/20 overflow-hidden">
-                <div className="h-full bg-[var(--color-brass)]" style={{ width: `${Math.round(progress * 100)}%`, transition: "width 200ms linear" }} />
+              <div className="h-px bg-[var(--color-bone)]/15 overflow-hidden">
+                <div className="h-full bg-[var(--color-bone)]/60" style={{ width: `${Math.round(progress * 100)}%`, transition: "width 200ms linear" }} />
               </div>
-              <p className="label mt-5">Preparing the Cloth</p>
+              <p className="eyebrow mt-5">Preparing <em>the</em> CLOTH</p>
             </div>
           </div>
         )}

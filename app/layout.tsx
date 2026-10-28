@@ -3,7 +3,6 @@ import { Bodoni_Moda, Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import BookBar from "@/components/ui/BookBar";
-import TapeCursor from "@/components/ui/TapeCursor";
 
 // DISPLAY — Bodoni Moda. High contrast, sharp serifs. The house voice.
 const bodoni = Bodoni_Moda({
@@ -41,7 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${bodoni.variable} ${archivo.variable} ${mono.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <div className="grain" aria-hidden />
-        <TapeCursor />
         <BookBar />
         <SmoothScroll>{children}</SmoothScroll>
       </body>

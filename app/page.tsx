@@ -1,6 +1,6 @@
 import Hero from "@/components/acts/Hero";
 import AssemblyCanvas from "@/components/acts/AssemblyCanvas";
-import FittingRoom from "@/components/acts/FittingRoom";
+import Atelier from "@/components/acts/Atelier";
 import ClothLibrary from "@/components/acts/ClothLibrary";
 import Detail from "@/components/acts/Detail";
 import About from "@/components/acts/About";
@@ -12,7 +12,7 @@ export default function Page() {
     <main>
       <Hero />
       <AssemblyCanvas />
-      <FittingRoom />
+      <Atelier />
       <ClothLibrary />
       <Detail />
       <About />

@@ -13,7 +13,7 @@ export default function About() {
   const a = copy.about;
 
   return (
-    <section id="about" className="relative bg-[var(--color-ink)] pt-32 pb-28 overflow-hidden">
+    <section id="about" className="relative bg-[var(--color-ink)] py-[clamp(96px,16vh,190px)] overflow-hidden">
       <span className="warp" aria-hidden />
       <span className="hush" aria-hidden />
 
@@ -22,8 +22,8 @@ export default function About() {
           <SectionLabel n={a.label}>{a.tag}</SectionLabel>
           <RevealText
             as="h2"
-            className="display text-[clamp(38px,5.6vw,80px)] mt-6 mb-10 text-[var(--color-bone)]"
-            lines={[a.title]}
+            className="display text-center text-[clamp(34px,4.8vw,64px)] leading-[1.04] mt-7 mb-10 text-[var(--color-bone)]"
+            lines={[<>A NOTE <em className="italic">from</em></>, <>the FOUNDER</>]}
           />
         </Reveal>
 

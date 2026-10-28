@@ -6,7 +6,6 @@ import SectionLabel from "@/components/ui/SectionLabel";
 import Reveal from "@/components/ui/Reveal";
 import RevealText from "@/components/ui/RevealText";
 import StitchLine from "@/components/ui/StitchLine";
-import ChalkMark from "@/components/ui/ChalkMark";
 
 // 03 — The Architecture of Detail.
 // A feature plate, then details strung down the spine. Four of them, and every
@@ -17,12 +16,12 @@ export default function Detail() {
   const [chosen, setChosen] = useState<Record<string, string>>(defaultConfiguration);
 
   return (
-    <section id="detail" className="relative isolate bg-[var(--color-ink)] px-[clamp(20px,5vw,80px)] pt-[14vh] pb-[10vh] overflow-hidden">
+    <section id="detail" className="relative isolate bg-[var(--color-ink)] px-[clamp(20px,5vw,80px)] pt-[17vh] pb-[13vh] overflow-hidden">
       <StitchLine />
 
-      <Reveal className="relative z-10 max-w-3xl mx-auto text-center mb-[11vh]">
+      <Reveal className="relative z-10 max-w-3xl mx-auto text-center mb-[14vh]">
         <SectionLabel n={label}>{tag}</SectionLabel>
-        <h2 className="display text-[clamp(38px,5vw,76px)] mt-7 mb-6 text-[var(--color-bone)]">{title}</h2>
+        <h2 className="display text-[clamp(38px,5vw,76px)] leading-[1.0] mt-8 mb-7 text-[var(--color-bone)]">The ARCHITECTURE <em>of</em> DETAIL</h2>
         <p className="body-copy mx-auto !text-center !max-w-[44ch]">{lead}</p>
       </Reveal>
 
@@ -35,8 +34,6 @@ export default function Detail() {
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1100ms] ease-[var(--ease-cloth)] group-hover:scale-[1.04]"
           />
           <span aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(23,24,28,0.72) 100%)" }} />
-          <ChalkMark kind="circle" className="top-[10%] right-[13%]" label="roll" width={104} height={104} />
-          <ChalkMark kind="arrow" className="top-[42%] left-[8%] rotate-[8deg]" width={96} height={96} />
           <figcaption className="absolute left-0 right-0 bottom-0 p-[clamp(20px,3vw,40px)] text-white flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
               <span className="label !text-[var(--color-brass)]">01 — {feature.k}</span>
