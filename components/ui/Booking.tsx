@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { copy } from "@/lib/copy";
 import { payWithRazorpay } from "@/lib/razorpay";
+import { TIMES } from "@/lib/slots";
+import type { BookingPrefill } from "@/lib/booking";
 
 type Zone = (typeof copy.booking.zones)[number];
 
-const TIMES = ["10:00", "11:30", "13:00", "15:00", "17:00", "19:00"];
 const FEE = 19900;
 
 export default function Booking() {
@@ -15,7 +16,7 @@ export default function Booking() {
   const [step, setStep] = useState(1);
   const [done, setDone] = useState(false);
   const [zone, setZone] = useState<Zone>(copy.booking.zones[0]);
-  const [time, setTime] = useState(TIMES[2]);
+  const [time, setTime] = useState<string>(TIMES[2]);
   const [date, setDate] = useState("");
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
@@ -44,11 +45,15 @@ export default function Booking() {
 
   useEffect(() => {
     const openFn = (e: Event) => {
-      const detail = (e as CustomEvent<{ note?: string; label?: string } | undefined>).detail;
+      const detail = (e as CustomEvent<BookingPrefill | undefined>).detail;
       lastFocus.current = document.activeElement as HTMLElement | null;
       reset();
       if (detail?.note) setNotes(detail.note);
       if (detail?.label) setClothTag(detail.label);
+      const z = copy.booking.zones.find((x) => x.id === detail?.zone);
+      if (z) setZone(z);
+      if (detail?.date) setDate(detail.date);
+      if (detail?.time) setTime(detail.time);
       setOpen(true);
     };
     window.addEventListener("open-booking", openFn);
@@ -99,6 +104,7 @@ export default function Booking() {
           zone: zone.name,
           areas: zone.areas,
           date: dateTxt,
+          visitDate: date || undefined,
           time,
           address,
           pincode,

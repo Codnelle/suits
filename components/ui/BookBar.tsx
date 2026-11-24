@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { openBooking } from "@/lib/booking";
 import { copy } from "@/lib/copy";
 
 // Minimal light top bar that fades in once the hero has scrolled away.
 export default function BookBar() {
+  const admin = usePathname()?.startsWith("/admin");
   const [show, setShow] = useState(false);
   const last = useRef(0);
   const [hidden, setHidden] = useState(false);
@@ -22,6 +25,8 @@ export default function BookBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  if (admin) return null;
+
   return (
     <div
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[clamp(20px,4vw,54px)] py-4 border-b border-[var(--color-line)] bg-[var(--color-ink)]/80 backdrop-blur-md transition-[transform,opacity] duration-400"
@@ -31,15 +36,20 @@ export default function BookBar() {
         pointerEvents: show && !hidden ? "auto" : "none",
       }}
     >
-      <a href="#top" aria-label={copy.hero.brand}>
+      <a href="/#top" aria-label={copy.hero.brand}>
         <img src="/media/shahee-logo.png" alt={copy.hero.brand} className="h-[18px] w-auto" />
       </a>
+      <div className="flex items-center gap-6">
+      <Link href="/tailor" className="hidden sm:inline stitch-link font-[family-name:var(--font-display)] text-[14px] text-[var(--color-bone)]">
+        Meet <em>Master</em> G
+      </Link>
       <button
         onClick={() => openBooking()}
         className="text-[11px] uppercase tracking-[0.2em] px-5 py-2.5 rounded-full border border-[var(--color-bone)]/25 text-[var(--color-bone)] hover:bg-[var(--color-bone)] hover:text-white transition-colors"
       >
         {copy.hero.cta}
       </button>
+      </div>
     </div>
   );
 }

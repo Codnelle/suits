@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { copy, CONFIG_GROUPS } from "@/lib/copy";
+import { crm, upsertCustomer } from "@/lib/crm";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,7 @@ type Payload = {
   zone?: string;
   areas?: string;
   date?: string;
+  visitDate?: string;
   time?: string;
   address?: string;
   city?: string;
@@ -177,32 +179,84 @@ export async function POST(req: Request) {
 
   const { subject, html, text } = build(payload);
 
-  if (!RESEND_KEY) {
-    return NextResponse.json({
-      delivered: false,
-      mailto: `mailto:${INBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`,
-    });
-  }
+  // the request reaches Shahee if either the CRM or the inbox has it
+  const [saved, emailed] = await Promise.all([record(payload), email(subject, html, text, payload.email)]);
+  if (saved || emailed) return NextResponse.json({ delivered: true });
+  return NextResponse.json({
+    delivered: false,
+    mailto: `mailto:${INBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`,
+  });
+}
 
+async function email(subject: string, html: string, text: string, replyTo?: string): Promise<boolean> {
+  if (!RESEND_KEY) return false;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_KEY}` },
-      body: JSON.stringify({ from: FROM, to: [INBOX], reply_to: payload.email, subject, html, text }),
+      body: JSON.stringify({ from: FROM, to: [INBOX], reply_to: replyTo, subject, html, text }),
     });
-
-    if (!res.ok) {
-      return NextResponse.json({
-        delivered: false,
-        mailto: `mailto:${INBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`,
-      });
-    }
-
-    return NextResponse.json({ delivered: true });
+    return res.ok;
   } catch {
-    return NextResponse.json({
-      delivered: false,
-      mailto: `mailto:${INBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`,
+    return false;
+  }
+}
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Save the customer, and the visit or order, to the CRM.
+async function record(p: Payload): Promise<boolean> {
+  const db = crm();
+  if (!db) return false;
+  try {
+    const measurements = Object.assign({}, ...(p.lines ?? []).map((l) => l.measurements ?? {}));
+    const customerId = await upsertCustomer(db, {
+      name: p.name!,
+      email: p.email,
+      phone: p.phone,
+      address: p.address,
+      city: p.city,
+      state: p.state,
+      pincode: p.pincode,
+      measurements,
     });
+
+    if (p.kind === "order") {
+      const { error } = await db.from("orders").insert({
+        customer_id: customerId,
+        status: p.payment?.id ? "paid" : "placed",
+        total: p.total ?? null,
+        lines: p.lines ?? [],
+        address: p.address ?? null,
+        city: p.city ?? null,
+        state: p.state ?? null,
+        pincode: p.pincode ?? null,
+        notes: p.notes ?? null,
+        payment_id: p.payment?.id ?? null,
+        payment_amount: p.payment?.amount ?? null,
+      });
+      if (error) throw error;
+    } else {
+      const cloth = p.notes?.match(/Interested in: ([^·]+)/)?.[1]?.trim() ?? null;
+      const { error } = await db.from("visits").insert({
+        customer_id: customerId,
+        zone: p.zone ?? null,
+        areas: p.areas ?? null,
+        visit_date: p.visitDate && ISO_DATE.test(p.visitDate) ? p.visitDate : null,
+        visit_time: p.time ?? null,
+        address: p.address ?? null,
+        pincode: p.pincode ?? null,
+        occasion: p.occasion ?? null,
+        cloth,
+        notes: p.notes ?? null,
+        payment_id: p.payment?.id ?? null,
+        payment_amount: p.payment?.amount ?? null,
+      });
+      if (error) throw error;
+    }
+    return true;
+  } catch (error) {
+    console.error("crm: could not record", p.kind ?? "booking", error);
+    return false;
   }
 }

@@ -24,7 +24,7 @@ export default function Ledger() {
           ))}
           <span className="label mb-5 block mt-8">The Craft</span>
           {columns[1].links.map((l) => (
-            <a key={l} href="#" className="stitch-link block w-fit text-[12px] text-[var(--color-ash)] py-1.5 hover:text-[var(--color-bone)] transition-colors">{l}</a>
+            <a key={l} href={l === "Master G at Home" ? "/tailor" : "#"} className="stitch-link block w-fit text-[12px] text-[var(--color-ash)] py-1.5 hover:text-[var(--color-bone)] transition-colors">{l}</a>
           ))}
         </div>
 

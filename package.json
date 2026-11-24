@@ -9,11 +9,14 @@
     "gen:sequence": "node scripts/gen-placeholder-sequence.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.13.0",
+    "@supabase/supabase-js": "^2.119.2",
     "gsap": "3.12.5",
     "lenis": "1.1.18",
     "next": "15.1.11",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

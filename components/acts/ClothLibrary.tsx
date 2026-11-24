@@ -199,11 +199,12 @@ export default function ClothLibrary() {
     <section id="cloth" className="relative bg-[var(--color-ink)] py-[clamp(96px,15vh,180px)] overflow-hidden">
       <div className="px-[clamp(20px,5vw,80px)]">
         <Reveal className="mb-16 md:mb-24">
-          <p className="eyebrow mb-7"><em>the</em> COLLECTION</p>
-          <h2 className="display text-[clamp(40px,6.4vw,96px)] text-[var(--color-bone)] leading-[0.98]">
-            <span className="block">FOUR houses,</span>
-            <span className="block"><em>one</em> WARDROBE.</span>
+          <h2 className="display text-[clamp(48px,8vw,128px)] text-[var(--color-bone)] leading-[0.94]">
+            <em>the</em> COLLECTION
           </h2>
+          <p className="display italic text-[clamp(20px,2.2vw,32px)] text-[var(--color-ash)] mt-4">
+            {copy.cloth.title}
+          </p>
           <p className="body-copy mt-7">{copy.cloth.lead}</p>
         </Reveal>
 

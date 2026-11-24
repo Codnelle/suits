@@ -11,6 +11,28 @@ const DESKTOP_COUNT = 120;
 const MOBILE_COUNT = 60;
 const pad = (n: number) => String(n).padStart(3, "0");
 
+// how much of a wide screen's height the square film takes
+const FIT_INSET = 0.94;
+
+// fade each edge of the drawn photograph into the page colour
+function feather(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, w: number, h: number) {
+  const fx = w * 0.12;
+  const fy = h * 0.06;
+  // the transparent stop keeps the page colour's hue, so no grey seam forms
+  const clear = /^#[0-9a-f]{6}$/i.test(color) ? `${color}00` : "rgba(235,229,219,0)";
+  const band = (x0: number, y0: number, x1: number, y1: number, rx: number, ry: number, rw: number, rh: number) => {
+    const g = ctx.createLinearGradient(x0, y0, x1, y1);
+    g.addColorStop(0, color);
+    g.addColorStop(1, clear);
+    ctx.fillStyle = g;
+    ctx.fillRect(rx, ry, rw, rh);
+  };
+  band(x, 0, x + fx, 0, x, y, fx, h);
+  band(x + w, 0, x + w - fx, 0, x + w - fx, y, fx, h);
+  band(0, y, 0, y + fy, x, y, w, fy);
+  band(0, y + h, 0, y + h - fy, x, y + h - fy, w, fy);
+}
+
 // the suit sits small between the two halves of a statement at either end,
 // and fills the frame while it is being made
 const SETTLED = 0.56;
@@ -53,8 +75,14 @@ export default function AssemblyCanvas() {
   const closeRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const proxy = useRef({ f: 0 });
   const drawnFrame = useRef(-1);
+  const ground = useRef("#EBE5DB");
 
-  // ---- draw a frame with manual cover-fit ----
+  // ---- draw a frame ----
+  // The film is a square, head-to-thigh shot of a man. On a wide screen the
+  // whole square is shown (a little inside the frame, so his head has room);
+  // on a tall screen it covers the height and the bare backdrop at the sides
+  // is cropped. The photograph's edges are feathered into the page colour so
+  // the square never reads as a box.
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -64,17 +92,35 @@ export default function AssemblyCanvas() {
     if (idx === drawnFrame.current) return;
     const frame = nearestLoaded(framesRef.current, Math.min(count - 1, Math.max(0, idx)));
     if (!frame) return;
+    const resized = drawnFrame.current === -1;
     drawnFrame.current = idx;
 
     const cw = canvas.width;
     const ch = canvas.height;
     const iw = "naturalWidth" in frame ? frame.naturalWidth : frame.width;
     const ih = "naturalHeight" in frame ? frame.naturalHeight : frame.height;
-    const scale = Math.max(cw / iw, ch / ih);
+    const scale = cw >= ch ? Math.min(cw / iw, ch / ih) * FIT_INSET : Math.max(cw / iw, ch / ih);
     const dw = iw * scale;
     const dh = ih * scale;
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(frame as CanvasImageSource, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    const dx = (cw - dw) / 2;
+    const dy = (ch - dh) / 2;
+
+    ctx.fillStyle = ground.current;
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.drawImage(frame as CanvasImageSource, dx, dy, dw, dh);
+    feather(ctx, ground.current, dx, dy, dw, dh);
+
+    // hotspots are placed in the photograph's own coordinates
+    const layer = hotspotLayerRef.current;
+    if (resized && layer) {
+      const k = canvas.clientWidth / cw;
+      Object.assign(layer.style, {
+        left: `${dx * k}px`,
+        top: `${dy * k}px`,
+        width: `${dw * k}px`,
+        height: `${dh * k}px`,
+      });
+    }
   }, [framesRef, count]);
 
   // ---- canvas sizing (DPR-aware, debounced) ----
@@ -86,6 +132,7 @@ export default function AssemblyCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const size = () => {
+      ground.current = getComputedStyle(document.documentElement).getPropertyValue("--color-ink").trim() || ground.current;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(canvas.clientWidth * dpr);
       canvas.height = Math.round(canvas.clientHeight * dpr);
@@ -194,7 +241,7 @@ export default function AssemblyCanvas() {
           <canvas
             ref={canvasRef}
             role="img"
-            aria-label="Shahee — a suit being made, from shirt to waistcoat to jacket"
+            aria-label="Shahee — a navy three-piece suit coming together on a man, from shirt to waistcoat to jacket"
             className="absolute inset-0 w-full h-full"
           />
           {/* hotspots share the canvas's coordinate space */}

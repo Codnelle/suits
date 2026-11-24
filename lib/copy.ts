@@ -116,8 +116,8 @@ export const copy = {
       title: "Structured Collar",
       note:
         "Shaped to sit close at the neck and hold its line through the longest evening — it never gaps when you turn your head.",
-      x: 0.5,
-      y: 0.2,
+      x: 0.54,
+      y: 0.26,
     },
     {
       id: "armhole",
@@ -125,7 +125,7 @@ export const copy = {
       note:
         "Cut high and eased by hand. The arm moves freely and the jacket stays on the shoulder, instead of dragging the whole body with it.",
       x: 0.68,
-      y: 0.34,
+      y: 0.33,
     },
     {
       id: "lapel",
@@ -133,15 +133,15 @@ export const copy = {
       note:
         "Never pressed flat. Rolled by hand so it curves off the chest in a soft, regal line — peak, notch or shawl, whichever the cloth asks for.",
       x: 0.4,
-      y: 0.42,
+      y: 0.38,
     },
     {
       id: "buttonhole",
       title: "The Buttonhole",
       note:
         "Cut, never punched. Gimped in fine silk over two buttonholes on the jacket and trouser — a punched hole frays in a season, a hand-worked one outlives its first owner.",
-      x: 0.72,
-      y: 0.66,
+      x: 0.51,
+      y: 0.67,
     },
   ],
 
@@ -516,6 +516,38 @@ export const copy = {
     edition:
       "Set in Bodoni Moda, Archivo & JetBrains Mono. Built on Next.js. Bespoke tailoring, brought to your door in Bengaluru.",
     copyright: "© 2026 Shahee Suits. All rights reserved. Crafted with legacy.",
+  },
+
+  // /tailor — Master G's own page, and his diary
+  tailor: {
+    eyebrow: ["the", "TAILOR"],
+    line1: ["MASTER G,"],
+    line2: ["at", "YOUR DOOR."],
+    lead: "Thirty years at the cutting table. Now the table comes to you.",
+    body: [
+      "Master G learned to cut the old way — by eye first, then by tape. He watches how a man stands, which shoulder he favours and how he sits, before a single measurement is written down. The pattern begins with your posture, not a standard block.",
+      "He arrives with the full Shahee catalogue, the four houses of cloth and his measuring kit, and stays as long as the decision takes. The trial fitting comes back to the same door, and so does the finished suit.",
+    ],
+    facts: [
+      { n: "30", label: "years at the table" },
+      { n: "19", label: "measurements per suit" },
+      { n: "4", label: "houses of cloth in his kit" },
+    ],
+    visitEyebrow: ["the", "VISIT"],
+    visit: [
+      { word: "THE WINDOW", line: "Pick a two-hour window below. Master G confirms it on WhatsApp or email.", media: "process-door.webp" },
+      { word: "THE CLOTH", line: "The catalogue opens at your table. Feel every house in your own light.", media: "process-cloth.webp" },
+      { word: "THE TAPE", line: "Nineteen measurements, taken over a thin shirt, read with tape and eye.", media: "process-measure.webp" },
+      { word: "THE TRIAL", line: "Your trial — and later your suit — arrive at the same door.", media: "process-fitting.webp" },
+    ],
+    diaryEyebrow: ["his", "DIARY"],
+    diaryLine: ["Choose", "a", "WINDOW."],
+    diaryLead: "Live from Master G's diary. Pick your zone, then any open window, and the booking opens with it filled in.",
+    diaryEmpty: "Every window in this zone is taken for the next two weeks. Write to us and we will open one.",
+    diaryError: "The diary could not be reached just now. You can still book and choose a time inside the form.",
+    fee: "₹199 home-visit fee, adjusted in full against your suit.",
+    closeA: ["no", "STORE,"],
+    closeB: ["no", "SIZE CHART."],
   },
 
   nav: {

@@ -1,24 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { copy } from "@/lib/copy";
 import { openBooking } from "@/lib/booking";
 import Reveal from "@/components/ui/Reveal";
-
-// CAPS stay as written; the lowercase connectors are set in italic.
-function Words({ parts }: { parts: readonly string[] }) {
-  return (
-    <>
-      {parts.map((p, i) => (
-        <span key={i}>
-          {i > 0 && " "}
-          {p === p.toUpperCase() ? p : <em>{p}</em>}
-        </span>
-      ))}
-    </>
-  );
-}
+import Words from "@/components/ui/Words";
 
 /**
  * Directly after the made suit:
@@ -150,9 +138,9 @@ export default function Atelier() {
         </p>
       </Reveal>
       <Reveal>
-        <button onClick={() => openBooking()} className="pill mt-14">
+        <Link href="/tailor" className="pill mt-14">
           Meet <em>Master</em> G
-        </button>
+        </Link>
       </Reveal>
     </section>
   );

@@ -6,6 +6,7 @@ import { copy, houseOf, type Fabric, type House } from "@/lib/copy";
 import { cartLines, type CartLine } from "@/lib/cart";
 import FabricModal from "@/components/ui/FabricModal";
 import CartDrawer from "@/components/order/CartDrawer";
+import FitAssistant from "@/components/order/FitAssistant";
 import { openBooking } from "@/lib/booking";
 import Reveal from "@/components/ui/Reveal";
 import Magnetic from "@/components/ui/Magnetic";
@@ -145,6 +146,8 @@ export default function OrderFlow() {
               );
             })}
           </div>
+
+          <FitAssistant house={house} />
 
           <div className="mt-14 flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-[var(--color-ash)]/15">
             <p className="text-[12px] text-[var(--color-ash)] max-w-[46ch]">

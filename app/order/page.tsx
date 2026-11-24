@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import OrderFlow from "@/components/order/OrderFlow";
+import Booking from "@/components/ui/Booking";
 
 export const metadata: Metadata = {
   title: "Order Made to Measure — Shahee Suits",
@@ -11,6 +12,7 @@ export default function OrderPage() {
   return (
     <main>
       <OrderFlow />
+      <Booking />
     </main>
   );
 }
